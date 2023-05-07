@@ -14,31 +14,36 @@
  * limitations under the License.
  */
 
-package gsecurity
+package ginadaptor
 
-import "net/http"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/veerdone/gsecurity"
+	"github.com/veerdone/gsecurity/adaptor"
+)
 
-type standardAdaptor struct {
-	*http.Request
+type ginAdaptor struct {
+	*gin.Context
 }
 
-func Standard(req *http.Request) Adaptor {
-	return &standardAdaptor{Request: req}
+func New(c *gin.Context) adaptor.Adaptor {
+	return &ginAdaptor{Context: c}
 }
 
-func (a *standardAdaptor) GetToken(tokenName string) string {
+func (a *ginAdaptor) GetToken(tokenName string) string {
 	cookie, err := a.Cookie(tokenName)
-	if cookie != nil && err != nil {
-		return cookie.Value
+	if cookie != "" && err == nil {
+		return cookie
 	}
 
-	if header := a.Header.Get(tokenName); header != "" {
+	if header := a.GetHeader(tokenName); header != "" {
 		return header
 	}
 
-	return a.URL.Query().Get(tokenName)
+	return a.Query(tokenName)
 }
 
-func (a *standardAdaptor) SetCookie(conf Config, token string) {
-
+func (a *ginAdaptor) SetCookie(conf gsecurity.Config, token string) {
+	a.Context.SetCookie(conf.TokenName, token, int(conf.Timeout), conf.Cookie.Path,
+		conf.Cookie.Domain, conf.Cookie.Secure, conf.Cookie.HttpOnly)
 }

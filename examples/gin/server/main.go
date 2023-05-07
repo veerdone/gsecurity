@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/veerdone/gsecurity"
+	"github.com/veerdone/gsecurity/adaptor/ginadaptor"
 	"log"
 	"strconv"
 )
@@ -18,7 +19,7 @@ func main() {
 	})
 
 	g.GET("/isLogin", func(c *gin.Context) {
-		isLogin := gsecurity.IsLogin(gsecurity.Gin(c))
+		isLogin := gsecurity.IsLogin(ginadaptor.New(c))
 
 		c.JSON(200, gin.H{"isLogin": isLogin})
 	})

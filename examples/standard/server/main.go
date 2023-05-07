@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"github.com/veerdone/gsecurity"
+	"github.com/veerdone/gsecurity/adaptor/standardadaptor"
 	"net/http"
 	"strconv"
 )
@@ -28,7 +29,7 @@ func main() {
 	})
 
 	http.HandleFunc("/isLogin", func(writer http.ResponseWriter, req *http.Request) {
-		isLogin := gsecurity.IsLogin(gsecurity.Standard(req))
+		isLogin := gsecurity.IsLogin(standardadaptor.New(req))
 		_, err := fmt.Fprintln(writer, "登录成功:", isLogin)
 		if err != nil {
 			fmt.Println(err)
@@ -36,18 +37,18 @@ func main() {
 	})
 
 	http.HandleFunc("/set/session", func(w http.ResponseWriter, req *http.Request) {
-		session := gsecurity.Sessions(gsecurity.Standard(req))
+		session := gsecurity.Sessions(standardadaptor.New(req))
 		session.Set("key", "value")
 	})
 
 	http.HandleFunc("/get/session", func(w http.ResponseWriter, req *http.Request) {
-		session := gsecurity.Sessions(gsecurity.Standard(req))
+		session := gsecurity.Sessions(standardadaptor.New(req))
 		v, b := session.Get("key")
 		fmt.Println(v, b)
 	})
 
 	http.HandleFunc("/logout", func(w http.ResponseWriter, req *http.Request) {
-		gsecurity.Logout(gsecurity.Standard(req))
+		gsecurity.Logout(standardadaptor.New(req))
 	})
 
 	err := http.ListenAndServe("localhost:8080", nil)
