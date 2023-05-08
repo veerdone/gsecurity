@@ -26,6 +26,23 @@ type ginAdaptor struct {
 	*gin.Context
 }
 
+func (a *ginAdaptor) SetHeader(headerName, headerVal string) {
+	a.Context.Header(headerName, headerVal)
+}
+
+func (a *ginAdaptor) Get(key string) interface{} {
+	value, exists := a.Context.Get(key)
+	if exists {
+		return value
+	}
+
+	return nil
+}
+
+func (a *ginAdaptor) Set(key string, val interface{}) {
+	a.Context.Set(key, val)
+}
+
 func New(c *gin.Context) adaptor.Adaptor {
 	return &ginAdaptor{Context: c}
 }

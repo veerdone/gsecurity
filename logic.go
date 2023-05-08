@@ -23,9 +23,11 @@ import (
 
 const (
 	defaultLoginType = "login"
-	DefaultDevice    = "default-device"
-	sessionKey       = "%s:%s:session:%d"
-	tokenKey         = "%s:%s:token:%s"
+	defaultDisableService
+	DefaultDevice = "default-device"
+	sessionKey    = "%s:%s:session:%d"
+	tokenKey      = "%s:%s:token:%s"
+	disableKey    = "%s:%s:disable:%s:%d"
 )
 
 type Logic struct {
@@ -54,6 +56,19 @@ func (l *Logic) GetConfig() Config {
 
 func (l *Logic) GetStore() Store {
 	return l.Store
+}
+
+// GetIdByToken if not login or token is invalid, return 0
+func (l *Logic) GetIdByToken(token string) int64 {
+	cacheId, ok := l.Store.Get(l.buildTokenKey(token))
+	if ok {
+		id := cacheId.(int64)
+		if isValidId(id) {
+			return id
+		}
+	}
+
+	return 0
 }
 
 // GetSessionByToken get session by token, if token not exist, return nil
@@ -220,6 +235,10 @@ func (l *Logic) buildTokenKey(token string) string {
 	return fmt.Sprintf(tokenKey, l.TokenName, l.LoginType, token)
 }
 
+func (l *Logic) buildDisableKey(id int64, service string) string {
+	return fmt.Sprintf(disableKey, l.TokenName, l.LoginType, service, id)
+}
+
 func (l *Logic) createLoginSession(id int64, device string, token string) {
 	session := l.GetSessionByIdOrCreate(id)
 
@@ -235,4 +254,34 @@ func (l *Logic) createLoginSession(id int64, device string, token string) {
 // GetTokenTimeout get expire time by token, return value is the number of seconds
 func (l *Logic) GetTokenTimeout(token string) int64 {
 	return l.GetExTime(l.buildTokenKey(token))
+}
+
+func (l *Logic) DisableWithLevelAndService(id, level, exTime int64, service string) {
+	l.Store.Set(l.buildDisableKey(id, service), level, exTime)
+}
+
+func (l *Logic) IsDisableWithLevelAndService(id, level int64, service string) bool {
+	err := l.CheckDisableWithLevelAndService(id, level, service)
+
+	return err == nil
+}
+
+func (l *Logic) CheckDisableWithLevelAndService(id, level int64, service string) error {
+	key := l.buildDisableKey(id, service)
+	cLevel, ok := l.Store.Get(key)
+	if ok && cLevel.(int64) >= level {
+		return NewErrDisable(level, service)
+	}
+
+	return nil
+}
+
+func (l *Logic) RmDisableWithServices(id int64, services ...string) {
+	for _, service := range services {
+		l.Store.Delete(l.buildDisableKey(id, service))
+	}
+}
+
+func (l *Logic) DisableExTime(id int64, service string) int64 {
+	return l.Store.GetExTime(l.buildDisableKey(id, service))
 }

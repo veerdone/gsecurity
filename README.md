@@ -12,7 +12,12 @@ go get github.com/veerdone/gsecurity
 
 Implement login with just one line of code
 ```go
-gsecurity.Login(10010)
+// Login return a token, then set token to cookie or response header or response body
+token := gsecurity.Login(10010)
+
+// or use LoginAndSet,login then set token to the cookie
+// the second method parameter needs to be implemented adaptor.Adaptor
+gsecurity.LoginAndSet(10010, standardadaptor.New(request))
 ```
 ## Document
 

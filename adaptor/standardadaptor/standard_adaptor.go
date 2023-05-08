@@ -26,6 +26,18 @@ type standardAdaptor struct {
 	*http.Request
 }
 
+func (a *standardAdaptor) SetHeader(headerName, headerVal string) {
+	a.Response.Header.Add(headerVal, headerVal)
+}
+
+func (a *standardAdaptor) Get(key string) interface{} {
+	return nil
+}
+
+func (a *standardAdaptor) Set(key string, val interface{}) {
+	
+}
+
 func New(req *http.Request) adaptor.Adaptor {
 	return &standardAdaptor{Request: req}
 }

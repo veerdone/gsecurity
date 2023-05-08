@@ -14,7 +14,7 @@ func main() {
 	g.POST("/login", func(c *gin.Context) {
 		queryId := c.Query("id")
 		id, _ := strconv.ParseInt(queryId, 10, 64)
-		gsecurity.LoginAndSet(id, gsecurity.Gin(c))
+		gsecurity.LoginAndSet(id, ginadaptor.New(c))
 		c.JSON(200, gin.H{"msg": "ok"})
 	})
 

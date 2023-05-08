@@ -21,4 +21,7 @@ import "github.com/veerdone/gsecurity"
 type Adaptor interface {
 	GetToken(tokenName string) string
 	SetCookie(conf gsecurity.Config, token string)
+	SetHeader(headerName, headerVal string)
+	Get(key string) interface{}
+	Set(key string, val interface{})
 }
