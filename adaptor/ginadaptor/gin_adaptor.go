@@ -26,6 +26,27 @@ type ginAdaptor struct {
 	*gin.Context
 }
 
+func New(c *gin.Context) adaptor.Adaptor {
+	return &ginAdaptor{Context: c}
+}
+
+func (a *ginAdaptor) GetFromHeader(tokenName string) string {
+	return a.GetHeader(tokenName)
+}
+
+func (a *ginAdaptor) GetFromQuery(tokenName string) string {
+	return a.Query(tokenName)
+}
+
+func (a *ginAdaptor) GetFromCookie(tokenName string) string {
+	cookie, err := a.Cookie(tokenName)
+	if cookie != "" && err == nil {
+		return cookie
+	}
+
+	return ""
+}
+
 func (a *ginAdaptor) SetHeader(headerName, headerVal string) {
 	a.Context.Header(headerName, headerVal)
 }
@@ -41,23 +62,6 @@ func (a *ginAdaptor) Get(key string) interface{} {
 
 func (a *ginAdaptor) Set(key string, val interface{}) {
 	a.Context.Set(key, val)
-}
-
-func New(c *gin.Context) adaptor.Adaptor {
-	return &ginAdaptor{Context: c}
-}
-
-func (a *ginAdaptor) GetToken(tokenName string) string {
-	cookie, err := a.Cookie(tokenName)
-	if cookie != "" && err == nil {
-		return cookie
-	}
-
-	if header := a.GetHeader(tokenName); header != "" {
-		return header
-	}
-
-	return a.Query(tokenName)
 }
 
 func (a *ginAdaptor) SetCookie(conf gsecurity.Config, token string) {

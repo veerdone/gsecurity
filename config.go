@@ -39,7 +39,17 @@ type Config struct {
 	IsShare bool
 	// generated token's style, can be customized
 	TokenStyle GenerateToken
-	Cookie     Cookie
+	// read token from query, default true
+	ReadFromQuery bool
+	// read token from header, default true
+	ReadFromHeader bool
+	// read token from cookie, default true
+	ReadFromCookie bool
+	// set token to header, default false
+	WriteToHeader bool
+	// set token to cookie, default true
+	WriteToCookie bool
+	Cookie        Cookie
 }
 
 type Cookie struct {

@@ -19,7 +19,9 @@ package adaptor
 import "github.com/veerdone/gsecurity"
 
 type Adaptor interface {
-	GetToken(tokenName string) string
+	GetFromHeader(tokenName string) string
+	GetFromQuery(tokenName string) string
+	GetFromCookie(tokenName string) string
 	SetCookie(conf gsecurity.Config, token string)
 	SetHeader(headerName, headerVal string)
 	Get(key string) interface{}

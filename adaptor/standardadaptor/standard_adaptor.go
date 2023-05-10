@@ -20,10 +20,33 @@ import (
 	"github.com/veerdone/gsecurity"
 	"github.com/veerdone/gsecurity/adaptor"
 	"net/http"
+	"sync"
 )
 
 type standardAdaptor struct {
 	*http.Request
+	m sync.Map
+}
+
+func New(req *http.Request) adaptor.Adaptor {
+	return &standardAdaptor{Request: req, m: sync.Map{}}
+}
+
+func (a *standardAdaptor) GetFromHeader(tokenName string) string {
+	return a.Header.Get(tokenName)
+}
+
+func (a *standardAdaptor) GetFromQuery(tokenName string) string {
+	return a.URL.Query().Get(tokenName)
+}
+
+func (a *standardAdaptor) GetFromCookie(tokenName string) string {
+	cookie, err := a.Cookie(tokenName)
+	if cookie != nil && err == nil {
+		return cookie.Value
+	}
+
+	return ""
 }
 
 func (a *standardAdaptor) SetHeader(headerName, headerVal string) {
@@ -31,28 +54,13 @@ func (a *standardAdaptor) SetHeader(headerName, headerVal string) {
 }
 
 func (a *standardAdaptor) Get(key string) interface{} {
-	return nil
+	value, _ := a.m.Load(key)
+
+	return value
 }
 
 func (a *standardAdaptor) Set(key string, val interface{}) {
-	
-}
-
-func New(req *http.Request) adaptor.Adaptor {
-	return &standardAdaptor{Request: req}
-}
-
-func (a *standardAdaptor) GetToken(tokenName string) string {
-	cookie, err := a.Cookie(tokenName)
-	if cookie != nil && err != nil {
-		return cookie.Value
-	}
-
-	if header := a.Header.Get(tokenName); header != "" {
-		return header
-	}
-
-	return a.URL.Query().Get(tokenName)
+	a.m.Store(key, val)
 }
 
 func (a *standardAdaptor) SetCookie(conf gsecurity.Config, token string) {
