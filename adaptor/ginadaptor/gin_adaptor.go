@@ -19,14 +19,13 @@ package ginadaptor
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/veerdone/gsecurity"
-	"github.com/veerdone/gsecurity/adaptor"
 )
 
 type ginAdaptor struct {
 	*gin.Context
 }
 
-func New(c *gin.Context) adaptor.Adaptor {
+func New(c *gin.Context) gsecurity.Adaptor {
 	return &ginAdaptor{Context: c}
 }
 

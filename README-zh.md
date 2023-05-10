@@ -14,7 +14,7 @@ go get github.com/veerdone/gsecurity
 toekn := gsecurity.Login(10010)
 
 // 或者使用 LoginAndSet, 登录后将 token 设置到 cookie 中
-// 第二个方法参数需要实现 adaptor.Adaptor
+// 第二个方法参数需要实现 Adaptor
 gsecurity.LoginAndSet(10010, standardadaptor.New(request))
 ```
 ## 文档

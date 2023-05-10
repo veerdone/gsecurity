@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package adaptor
-
-import "github.com/veerdone/gsecurity"
+package gsecurity
 
 type Adaptor interface {
 	GetFromHeader(tokenName string) string
 	GetFromQuery(tokenName string) string
 	GetFromCookie(tokenName string) string
-	SetCookie(conf gsecurity.Config, token string)
+	SetCookie(conf Config, token string)
 	SetHeader(headerName, headerVal string)
 	Get(key string) interface{}
 	Set(key string, val interface{})

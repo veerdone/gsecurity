@@ -16,8 +16,6 @@
 
 package gsecurity
 
-import "github.com/veerdone/gsecurity/adaptor"
-
 type Security struct {
 	*Logic
 }
@@ -32,7 +30,7 @@ func (s *Security) Login(id int64) string {
 }
 
 // LoginAndSet use id to login, and set token to cookie, return token
-func (s *Security) LoginAndSet(id int64, a adaptor.Adaptor) string {
+func (s *Security) LoginAndSet(id int64, a Adaptor) string {
 	token := s.Login(id)
 	if s.WriteToCookie {
 		a.SetCookie(s.Config, token)
@@ -49,7 +47,7 @@ func (s *Security) LoginWithDevice(id int64, device string) string {
 	return s.Logic.LoginWithDevice(id, device)
 }
 
-func (s *Security) getToken(a adaptor.Adaptor) string {
+func (s *Security) getToken(a Adaptor) string {
 	if s.ReadFromHeader {
 		if token := a.GetFromHeader(s.TokenName); token != "" {
 			return token
@@ -70,7 +68,7 @@ func (s *Security) getToken(a adaptor.Adaptor) string {
 }
 
 // IsLogin get token from adaptor.Adaptor and check token login or not
-func (s *Security) IsLogin(a adaptor.Adaptor) bool {
+func (s *Security) IsLogin(a Adaptor) bool {
 	token := s.getToken(a)
 
 	return s.IsLoginByToken(token)
@@ -78,26 +76,26 @@ func (s *Security) IsLogin(a adaptor.Adaptor) bool {
 
 // CheckLogin get token from adaptor.Adaptor and check token login or not,
 // if not login, return ErrNotLogin
-func (s *Security) CheckLogin(a adaptor.Adaptor) error {
+func (s *Security) CheckLogin(a Adaptor) error {
 	token := s.getToken(a)
 
 	return s.CheckLoginByToken(token)
 }
 
 // GetToken get token from adaptor.Adaptor
-func (s *Security) GetToken(a adaptor.Adaptor) string {
+func (s *Security) GetToken(a Adaptor) string {
 	return s.getToken(a)
 }
 
 // Session get token from adaptor.Adaptor then get Session by token
-func (s *Security) Session(a adaptor.Adaptor) *Session {
+func (s *Security) Session(a Adaptor) *Session {
 	token := s.getToken(a)
 
 	return s.GetSessionByToken(token)
 }
 
 // Logout get token from adaptor.Adaptor then use token to logout
-func (s *Security) Logout(a adaptor.Adaptor) {
+func (s *Security) Logout(a Adaptor) {
 	token := s.getToken(a)
 
 	s.Logic.LogoutByToken(token)

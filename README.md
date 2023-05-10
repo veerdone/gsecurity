@@ -16,7 +16,7 @@ Implement login with just one line of code
 token := gsecurity.Login(10010)
 
 // or use LoginAndSet,login then set token to the cookie
-// the second method parameter needs to be implemented adaptor.Adaptor
+// the second method parameter needs to be implemented Adaptor
 gsecurity.LoginAndSet(10010, standardadaptor.New(request))
 ```
 ## Document

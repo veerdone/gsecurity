@@ -16,8 +16,6 @@
 
 package gsecurity
 
-import "github.com/veerdone/gsecurity/adaptor"
-
 var defaultSecurity = &Security{
 	Logic: NewLogic(DefaultConfig, NewDefaultStore(30)),
 }
@@ -30,23 +28,23 @@ func Login(id int64) string {
 	return defaultSecurity.Login(id)
 }
 
-func LoginAndSet(id int64, a adaptor.Adaptor) string {
+func LoginAndSet(id int64, a Adaptor) string {
 	return defaultSecurity.LoginAndSet(id, a)
 }
 
-func IsLogin(a adaptor.Adaptor) bool {
+func IsLogin(a Adaptor) bool {
 	return defaultSecurity.IsLogin(a)
 }
 
-func CheckLogin(a adaptor.Adaptor) error {
+func CheckLogin(a Adaptor) error {
 	return defaultSecurity.CheckLogin(a)
 }
 
-func Sessions(a adaptor.Adaptor) *Session {
+func Sessions(a Adaptor) *Session {
 	return defaultSecurity.Session(a)
 }
 
-func Logout(a adaptor.Adaptor) {
+func Logout(a Adaptor) {
 	defaultSecurity.Logout(a)
 }
 

@@ -18,7 +18,6 @@ package standardadaptor
 
 import (
 	"github.com/veerdone/gsecurity"
-	"github.com/veerdone/gsecurity/adaptor"
 	"net/http"
 	"sync"
 )
@@ -28,7 +27,7 @@ type standardAdaptor struct {
 	m sync.Map
 }
 
-func New(req *http.Request) adaptor.Adaptor {
+func New(req *http.Request) gsecurity.Adaptor {
 	return &standardAdaptor{Request: req, m: sync.Map{}}
 }
 
