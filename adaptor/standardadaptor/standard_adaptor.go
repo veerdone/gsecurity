@@ -20,15 +20,17 @@ import (
 	"github.com/veerdone/gsecurity"
 	"net/http"
 	"sync"
+	"time"
 )
 
 type standardAdaptor struct {
 	*http.Request
-	m sync.Map
+	rw http.ResponseWriter
+	m  sync.Map
 }
 
-func New(req *http.Request) gsecurity.Adaptor {
-	return &standardAdaptor{Request: req, m: sync.Map{}}
+func New(req *http.Request, rw http.ResponseWriter) gsecurity.Adaptor {
+	return &standardAdaptor{Request: req, m: sync.Map{}, rw: rw}
 }
 
 func (a *standardAdaptor) GetFromHeader(tokenName string) string {
@@ -63,5 +65,24 @@ func (a *standardAdaptor) Set(key string, val interface{}) {
 }
 
 func (a *standardAdaptor) SetCookie(conf gsecurity.Config, token string) {
+	sameSite := http.SameSiteDefaultMode
+	switch conf.Cookie.SameSite {
+	case "None":
+		sameSite = http.SameSiteNoneMode
+	case "Lax":
+		sameSite = http.SameSiteLaxMode
+	case "strict":
+		sameSite = http.SameSiteStrictMode
+	}
 
+	http.SetCookie(a.rw, &http.Cookie{
+		Name:     conf.TokenName,
+		Value:    token,
+		Path:     conf.Cookie.Path,
+		Domain:   conf.Cookie.Domain,
+		Expires:  time.Now().Add(time.Second * time.Duration(conf.Timeout)),
+		Secure:   conf.Cookie.Secure,
+		HttpOnly: conf.Cookie.HttpOnly,
+		SameSite: sameSite,
+	})
 }

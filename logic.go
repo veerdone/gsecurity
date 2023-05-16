@@ -172,6 +172,7 @@ func (l *Logic) LogoutByIdAndDevice(id int64, device string) {
 			if len(session.TokenSignList) == 0 {
 				l.Store.Delete(session.Id)
 			}
+			l.Store.Delete(l.buildTokenKey(tokenSign.Val))
 		}
 	}
 }
@@ -199,6 +200,38 @@ func (l *Logic) LoginWithDevice(id int64, device string) string {
 	l.createLoginSession(id, device, token)
 
 	return token
+}
+
+func (l *Logic) Kick(id int64) {
+	l.kickWithDevice(id, DefaultDevice)
+}
+
+func (l *Logic) kickWithDevice(id int64, device string) {
+	session := l.GetSessionById(id)
+	if session != nil {
+		tokenSign, ok := session.GetTokenSignByDevice(device)
+		if ok {
+			session.DelTokenSignByToken(tokenSign.Val)
+			if len(session.TokenSignList) == 0 {
+				l.Store.Delete(session.Id)
+			}
+			l.Store.Update(l.buildTokenKey(tokenSign.Val), BeKick)
+		}
+	}
+}
+
+func (l *Logic) KickWithToken(token string) {
+	session := l.GetSessionByToken(token)
+	if session != nil {
+		tokenSign, ok := session.GetTokenSignByToken(token)
+		if ok {
+			session.DelTokenSignByToken(tokenSign.Val)
+			if len(session.TokenSignList) == 0 {
+				l.Store.Delete(session.Id)
+			}
+			l.Store.Update(l.buildTokenKey(tokenSign.Val), BeKick)
+		}
+	}
 }
 
 // assignToken assign token with id and device

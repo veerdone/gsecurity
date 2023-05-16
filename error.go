@@ -8,8 +8,10 @@ import (
 var (
 	ErrBeReplace = errors.New("has been replaced")
 	ErrNotLogin  = errors.New("not login")
+	ErrBeKick    = errors.New("has been kicked")
 	abnormalMap  = map[int64]error{
 		BeReplace: ErrBeReplace,
+		BeKick:    ErrBeKick,
 	}
 )
 

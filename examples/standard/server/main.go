@@ -28,27 +28,27 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/isLogin", func(writer http.ResponseWriter, req *http.Request) {
-		isLogin := gsecurity.IsLogin(standardadaptor.New(req))
-		_, err := fmt.Fprintln(writer, "登录成功:", isLogin)
+	http.HandleFunc("/isLogin", func(w http.ResponseWriter, req *http.Request) {
+		isLogin := gsecurity.IsLogin(standardadaptor.New(req, w))
+		_, err := fmt.Fprintln(w, "登录成功:", isLogin)
 		if err != nil {
 			fmt.Println(err)
 		}
 	})
 
 	http.HandleFunc("/set/session", func(w http.ResponseWriter, req *http.Request) {
-		session := gsecurity.Sessions(standardadaptor.New(req))
+		session := gsecurity.Sessions(standardadaptor.New(req, w))
 		session.Set("key", "value")
 	})
 
 	http.HandleFunc("/get/session", func(w http.ResponseWriter, req *http.Request) {
-		session := gsecurity.Sessions(standardadaptor.New(req))
+		session := gsecurity.Sessions(standardadaptor.New(req, w))
 		v, b := session.Get("key")
 		fmt.Println(v, b)
 	})
 
 	http.HandleFunc("/logout", func(w http.ResponseWriter, req *http.Request) {
-		gsecurity.Logout(standardadaptor.New(req))
+		gsecurity.Logout(standardadaptor.New(req, w))
 	})
 
 	err := http.ListenAndServe("localhost:8080", nil)

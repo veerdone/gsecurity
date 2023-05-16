@@ -87,6 +87,16 @@ func (s *Session) DelTokenSignByToken(token string) {
 	}
 }
 
+func (s *Session) GetTokenSignByToken(token string) (TokenSign, bool) {
+	for _, tokenSign := range s.TokenSignList {
+		if tokenSign.Val == token {
+			return tokenSign, true
+		}
+	}
+
+	return TokenSign{}, false
+}
+
 func removeTokenSignByIndex(index int, tokenSignList []TokenSign) []TokenSign {
 	result := make([]TokenSign, 0, len(tokenSignList)-1)
 	result = append(result, tokenSignList[:index]...)

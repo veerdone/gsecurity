@@ -23,4 +23,5 @@ const (
 	NotValueExist = -2
 	// BeReplace being knocked off the line
 	BeReplace = -4
+	BeKick    = -5
 )
