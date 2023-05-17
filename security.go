@@ -31,7 +31,18 @@ func (s *Security) Login(id int64) string {
 
 // LoginAndSet use id to login, and set token to cookie, return token
 func (s *Security) LoginAndSet(id int64, a Adaptor) string {
-	token := s.Login(id)
+	return s.LoginWithDeviceAndSet(id, DefaultDevice, a)
+}
+
+// LoginWithDevice use id and device to login, return token
+func (s *Security) LoginWithDevice(id int64, device string) string {
+	return s.Logic.LoginWithDevice(id, device)
+}
+
+func (s *Security) LoginWithDeviceAndSet(id int64, device string, a Adaptor) string {
+	token := s.Logic.LoginWithDevice(id, device)
+	a.Set(LoginIdReqCtx, id)
+	a.Set(LoginTokenReqCtx, token)
 	if s.WriteToCookie {
 		a.SetCookie(s.Config, token)
 	}
@@ -42,12 +53,10 @@ func (s *Security) LoginAndSet(id int64, a Adaptor) string {
 	return token
 }
 
-// LoginWithDevice use id and device to login, return token
-func (s *Security) LoginWithDevice(id int64, device string) string {
-	return s.Logic.LoginWithDevice(id, device)
-}
-
 func (s *Security) getToken(a Adaptor) string {
+	if token := a.Get(LoginTokenReqCtx); token != nil {
+		return token.(string)
+	}
 	if s.ReadFromHeader {
 		if token := a.GetFromHeader(s.TokenName); token != "" {
 			return token
@@ -65,6 +74,18 @@ func (s *Security) getToken(a Adaptor) string {
 	}
 
 	return ""
+}
+
+func (s *Security) GetLoginId(a Adaptor) int64 {
+	if id := a.Get(LoginIdReqCtx); id != nil {
+		return id.(int64)
+	}
+	token := s.getToken(a)
+	if token == "" {
+		return 0
+	}
+
+	return s.Logic.GetIdByToken(token)
 }
 
 // IsLogin get token from adaptor.Adaptor and check token login or not

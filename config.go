@@ -18,11 +18,22 @@ package gsecurity
 
 var (
 	DefaultConfig = Config{
-		TokenName:    "GSecurity",
-		Timeout:      2592000,
-		IsConcurrent: true,
-		IsShare:      true,
-		TokenStyle:   UUID,
+		TokenName:      "GSecurity",
+		Timeout:        2592000,
+		IsConcurrent:   true,
+		IsShare:        true,
+		TokenStyle:     UUID,
+		ReadFromQuery:  false,
+		ReadFromCookie: true,
+		ReadFromHeader: false,
+		WriteToHeader:  false,
+		WriteToCookie:  true,
+		Cookie: Cookie{
+			Path:     "/",
+			Secure:   false,
+			HttpOnly: false,
+			SameSite: "Lax",
+		},
 	}
 )
 

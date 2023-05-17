@@ -126,3 +126,18 @@ func DisableExTime(id int64) int64 {
 func DisableExTimeWithService(id int64, services string) int64 {
 	return defaultSecurity.DisableExTimeWithService(id, services)
 }
+
+// Kick kicking user offline by id
+func Kick(id int64) {
+	defaultSecurity.Logic.Kick(id)
+}
+
+// KickWithToken kicking user offline by token
+func KickWithToken(token string) {
+	defaultSecurity.Logic.KickWithToken(token)
+}
+
+// KickWithDevice kicking user offline by id and device
+func KickWithDevice(id int64, device string) {
+	defaultSecurity.Logic.kickWithDevice(id, device)
+}

@@ -90,7 +90,7 @@ func (l *Logic) GetSessionByToken(token string) *Session {
 // GetSessionById get session by id, if id not exist, return nil
 func (l *Logic) GetSessionById(id int64) *Session {
 	sessionValueKey := l.buildSessionKey(id)
-	s, ok := l.GetObj(sessionValueKey)
+	s, ok := l.GetSession(sessionValueKey)
 	if ok {
 		session := s.(*Session)
 		if session.store == nil {
@@ -168,10 +168,7 @@ func (l *Logic) LogoutByIdAndDevice(id int64, device string) {
 	if session != nil {
 		tokenSign, ok := session.GetTokenSignByDevice(device)
 		if ok {
-			session.DelTokenSignByToken(tokenSign.Val)
-			if len(session.TokenSignList) == 0 {
-				l.Store.Delete(session.Id)
-			}
+			l.removeTokenSign(session, tokenSign.Val)
 			l.Store.Delete(l.buildTokenKey(tokenSign.Val))
 		}
 	}
@@ -211,10 +208,7 @@ func (l *Logic) kickWithDevice(id int64, device string) {
 	if session != nil {
 		tokenSign, ok := session.GetTokenSignByDevice(device)
 		if ok {
-			session.DelTokenSignByToken(tokenSign.Val)
-			if len(session.TokenSignList) == 0 {
-				l.Store.Delete(session.Id)
-			}
+			l.removeTokenSign(session, tokenSign.Val)
 			l.Store.Update(l.buildTokenKey(tokenSign.Val), BeKick)
 		}
 	}
@@ -225,10 +219,7 @@ func (l *Logic) KickWithToken(token string) {
 	if session != nil {
 		tokenSign, ok := session.GetTokenSignByToken(token)
 		if ok {
-			session.DelTokenSignByToken(tokenSign.Val)
-			if len(session.TokenSignList) == 0 {
-				l.Store.Delete(session.Id)
-			}
+			l.removeTokenSign(session, tokenSign.Val)
 			l.Store.Update(l.buildTokenKey(tokenSign.Val), BeKick)
 		}
 	}
@@ -317,4 +308,11 @@ func (l *Logic) RmDisableWithServices(id int64, services ...string) {
 
 func (l *Logic) DisableExTime(id int64, service string) int64 {
 	return l.Store.GetExTime(l.buildDisableKey(id, service))
+}
+
+func (l *Logic) removeTokenSign(session *Session, token string) {
+	session.DelTokenSignByToken(token)
+	if len(session.TokenSignList) == 0 {
+		l.Store.Delete(session.Id)
+	}
 }

@@ -24,11 +24,11 @@ import (
 type Store interface {
 	Set(key string, val interface{}, exTime int64)
 	Get(key string) (interface{}, bool)
-	GetObj(key string) (interface{}, bool)
+	GetSession(key string) (interface{}, bool)
 	Update(key string, val interface{})
 	Delete(key string)
 	GetExTime(key string) int64
-	UpdateObjTimeout(key string, exTime int64)
+	UpdateSessionTimeout(key string, exTime int64)
 }
 
 // NewDefaultStore clearSleepTime is the number of seconds between each check when using default storage
@@ -49,7 +49,7 @@ type defaultStoreImpl struct {
 	clearSleepTime int
 }
 
-func (s *defaultStoreImpl) GetObj(key string) (interface{}, bool) {
+func (s *defaultStoreImpl) GetSession(key string) (interface{}, bool) {
 	return s.Get(key)
 }
 
@@ -85,7 +85,7 @@ func (s *defaultStoreImpl) GetExTime(key string) int64 {
 	return NotValueExist
 }
 
-func (s *defaultStoreImpl) UpdateObjTimeout(key string, exTime int64) {
+func (s *defaultStoreImpl) UpdateSessionTimeout(key string, exTime int64) {
 	s.exMap.Store(key, exTime)
 }
 

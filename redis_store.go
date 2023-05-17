@@ -28,6 +28,9 @@ type redisStoreImpl struct {
 }
 
 func NewRedisStore(r *redis.Client) Store {
+	if err := r.Ping(context.Background()).Err(); err != nil {
+		panic(err)
+	}
 	return &redisStoreImpl{client: r}
 }
 
@@ -48,7 +51,7 @@ func (r *redisStoreImpl) Get(key string) (interface{}, bool) {
 	return i, true
 }
 
-func (r *redisStoreImpl) GetObj(key string) (interface{}, bool) {
+func (r *redisStoreImpl) GetSession(key string) (interface{}, bool) {
 	cmd := r.client.Get(context.Background(), key)
 	session := new(Session)
 	if err := cmd.Scan(session); err != nil {
@@ -77,7 +80,7 @@ func (r *redisStoreImpl) Delete(key string) {
 	r.client.Del(context.Background(), key)
 }
 
-func (r *redisStoreImpl) UpdateObjTimeout(key string, exTime int64) {
+func (r *redisStoreImpl) UpdateSessionTimeout(key string, exTime int64) {
 	if exTime == NeverExpire {
 		exTime = 0
 	}

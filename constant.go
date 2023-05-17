@@ -22,6 +22,8 @@ const (
 	// NotValueExist Store getExTime if value not exist return this value
 	NotValueExist = -2
 	// BeReplace being knocked off the line
-	BeReplace = -4
-	BeKick    = -5
+	BeReplace        = -4
+	BeKick           = -5
+	LoginIdReqCtx    = "LoginIdReqCtx"
+	LoginTokenReqCtx = "LoginTokenReqCtx"
 )
