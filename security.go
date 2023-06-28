@@ -202,3 +202,129 @@ func (s *Security) DisableExTime(id int64) int64 {
 func (s *Security) DisableExTimeWithService(id int64, service string) int64 {
 	return s.Logic.DisableExTime(id, service)
 }
+
+func (s *Security) SetAuthorization(a Authorization) {
+	s.authorization = a
+}
+
+func (s *Security) GetPermissionList(a Adaptor) []string {
+	id := s.GetLoginId(a)
+
+	return s.authorization.GetPermissionList(id)
+}
+
+func (s *Security) GetRoleList(a Adaptor) []string {
+	id := s.GetLoginId(a)
+
+	return s.authorization.GetRoleList(id)
+}
+
+func (s *Security) HasRole(a Adaptor, role string) bool {
+	roleList := s.GetRoleList(a)
+	if len(roleList) == 0 {
+		return false
+	}
+
+	return check(role, roleList)
+}
+
+func (s *Security) HasRoleAnd(a Adaptor, roles ...string) bool {
+	if len(roles) == 0 {
+		return false
+	}
+
+	roleList := s.GetRoleList(a)
+	if len(roleList) == 0 {
+		return false
+	}
+
+	for i := range roles {
+		if !check(roles[i], roleList) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (s *Security) HasRoleOr(a Adaptor, roles ...string) bool {
+	if len(roles) == 0 {
+		return false
+	}
+
+	roleList := s.GetRoleList(a)
+	if len(roleList) == 0 {
+		return false
+	}
+
+	for i := range roles {
+		if check(roles[i], roleList) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (s *Security) HasPermission(a Adaptor, p string) bool {
+	permissionList := s.GetPermissionList(a)
+	if len(permissionList) == 0 {
+		return false
+	}
+
+	return check(p, permissionList)
+}
+
+func (s *Security) HasPermissionAnd(a Adaptor, ps ...string) bool {
+	if len(ps) == 0 {
+		return false
+	}
+	permissionList := s.GetPermissionList(a)
+	if len(permissionList) == 0 {
+		return false
+	}
+	for i := range ps {
+		if !check(ps[i], permissionList) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (s *Security) HasPermissionOr(a Adaptor, ps ...string) bool {
+	if len(ps) == 0 {
+		return false
+	}
+	permissionList := s.GetPermissionList(a)
+	if len(permissionList) == 0 {
+		return false
+	}
+
+	for i := range ps {
+		if check(ps[i], permissionList) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func check(s string, list []string) bool {
+	for i := range list {
+		r := list[i]
+		if r == s {
+			return true
+		}
+
+		if KeyMatch(s, r) {
+			return true
+		}
+
+		if KeyMatch2(s, r) {
+			return true
+		}
+	}
+
+	return false
+}

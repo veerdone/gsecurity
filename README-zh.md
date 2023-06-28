@@ -9,7 +9,7 @@
 - [x] 踢人下线
 - [x] 账号封禁
 - [x] 会话查询
-- [ ] 权限认证
+- [x] 权限认证
 
 ```shell
 go get github.com/veerdone/gsecurity
