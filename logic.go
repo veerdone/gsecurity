@@ -33,7 +33,8 @@ const (
 type Logic struct {
 	Store
 	Config
-	LoginType string
+	LoginType     string
+	authorization Authorization
 }
 
 func NewLogic(conf Config, store Store) *Logic {
@@ -315,4 +316,24 @@ func (l *Logic) removeTokenSign(session *Session, token string) {
 	if len(session.TokenSignList) == 0 {
 		l.Store.Delete(session.Id)
 	}
+}
+
+func (l *Logic) SetAuthorization(a Authorization) {
+	l.authorization = a
+}
+
+func (l *Logic) GetPermissionList(id int64) []string {
+	if l.authorization != nil {
+		return l.authorization.GetPermissionList(id)
+	}
+
+	return []string{}
+}
+
+func (l *Logic) GetRoleList(id int64) []string {
+	if l.authorization != nil {
+		return l.authorization.GetRoleList(id)
+	}
+
+	return []string{}
 }

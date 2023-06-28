@@ -9,7 +9,7 @@ Golang implementation imitating [sa-token](https://github.com/dromara/Sa-Token)
 - [x] Kick people offline
 - [x] Account banned
 - [x] Session query
-- [ ] Authority certification
+- [x] Authority certification
 
 ```shell
 go get github.com/veerdone/gsecurity
