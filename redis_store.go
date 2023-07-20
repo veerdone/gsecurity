@@ -19,7 +19,7 @@ package gsecurity
 import (
 	"context"
 	"github.com/redis/go-redis/v9"
-	"log"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -43,7 +43,7 @@ func (r *redisStoreImpl) Get(key string) (interface{}, bool) {
 	i, err := cmd.Int64()
 	if err != nil {
 		if err != redis.Nil {
-			log.Println(err)
+			log.Warn("redis get value fail", zap.Error(err), zap.String("key", key))
 		}
 		return i, false
 	}
@@ -56,7 +56,7 @@ func (r *redisStoreImpl) GetSession(key string) (interface{}, bool) {
 	session := new(Session)
 	if err := cmd.Scan(session); err != nil {
 		if err != redis.Nil {
-			log.Println(err)
+			log.Warn("redis get session fail", zap.Error(err), zap.String("key", key))
 		}
 		return nil, false
 	}
@@ -69,7 +69,7 @@ func (r *redisStoreImpl) Update(key string, val interface{}) {
 	exTime, err := r.client.TTL(ctx, key).Result()
 	if err != nil {
 		if err != redis.Nil {
-			log.Println(err)
+			log.Warn("redis update value fail", zap.Error(err), zap.String("key", key))
 		}
 		return
 	}
@@ -92,7 +92,7 @@ func (r *redisStoreImpl) GetExTime(key string) int64 {
 	duration, err := cmd.Result()
 	if err != nil {
 		if err != redis.Nil {
-			log.Println(err)
+			log.Warn("redis get expire time fail", zap.Error(err), zap.String("key", key))
 		}
 		return NotValueExist
 	}

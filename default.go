@@ -141,3 +141,27 @@ func KickWithToken(token string) {
 func KickWithDevice(id int64, device string) {
 	defaultSecurity.Logic.kickWithDevice(id, device)
 }
+
+func HasRole(a Adaptor, role string) bool {
+	return defaultSecurity.HasRole(a, role)
+}
+
+func HasRoleOr(a Adaptor, roles ...string) bool {
+	return defaultSecurity.HasRoleOr(a, roles...)
+}
+
+func HasRoleAnd(a Adaptor, roles ...string) bool {
+	return defaultSecurity.HasRoleAnd(a, roles...)
+}
+
+func HasPermission(a Adaptor, p string) bool {
+	return defaultSecurity.HasPermission(a, p)
+}
+
+func HasPermissionOr(a Adaptor, ps ...string) bool {
+	return defaultSecurity.HasPermissionOr(a, ps...)
+}
+
+func HasPermissionAnd(a Adaptor, ps ...string) bool {
+	return defaultSecurity.HasPermissionAnd(a, ps...)
+}

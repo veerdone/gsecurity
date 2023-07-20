@@ -1,6 +1,9 @@
 # gsecurity
 
 ------------
+```
+go version >= 1.18
+```
 [English](README.md) | 中文
 
 参考 [sa-token](https://github.com/dromara/Sa-Token) 的 Golang 实现
