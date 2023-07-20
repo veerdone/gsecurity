@@ -18,6 +18,7 @@ package gsecurity
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -154,6 +155,7 @@ func (l *Logic) LogoutByToken(token string) {
 			if len(session.TokenSignList) == 0 {
 				l.Store.Delete(session.Id)
 			}
+			log.Info("user logout", zap.String("loginType", l.LoginType), zap.Any("loginId", loginId))
 		}
 	}
 }
@@ -171,6 +173,7 @@ func (l *Logic) LogoutByIdAndDevice(id int64, device string) {
 		if ok {
 			l.removeTokenSign(session, tokenSign.Val)
 			l.Store.Delete(l.buildTokenKey(tokenSign.Val))
+			log.Info("user logout", zap.String("loginType", l.LoginType), zap.Int64("loginId", id))
 		}
 	}
 }
@@ -197,6 +200,9 @@ func (l *Logic) LoginWithDevice(id int64, device string) string {
 	token := l.assignToken(id, device)
 	l.createLoginSession(id, device, token)
 
+	log.Info("user login", zap.String("loginType", l.LoginType), zap.Int64("loginId", id),
+		zap.String("device", device))
+
 	return token
 }
 
@@ -211,6 +217,8 @@ func (l *Logic) kickWithDevice(id int64, device string) {
 		if ok {
 			l.removeTokenSign(session, tokenSign.Val)
 			l.Store.Update(l.buildTokenKey(tokenSign.Val), BeKick)
+			log.Info("kick user", zap.String("loginType", l.LoginType), zap.Int64("loginId", id),
+				zap.String("device", device))
 		}
 	}
 }
@@ -222,6 +230,8 @@ func (l *Logic) KickWithToken(token string) {
 		if ok {
 			l.removeTokenSign(session, tokenSign.Val)
 			l.Store.Update(l.buildTokenKey(tokenSign.Val), BeKick)
+			log.Info("kick user with token", zap.String("loginType", l.LoginType),
+				zap.String("device", tokenSign.Device), zap.String("token", token))
 		}
 	}
 }
@@ -283,6 +293,8 @@ func (l *Logic) GetTokenTimeout(token string) int64 {
 
 func (l *Logic) DisableWithLevelAndService(id, level, exTime int64, service string) {
 	l.Store.Set(l.buildDisableKey(id, service), level, exTime)
+	log.Info("disable user", zap.String("loginType", l.LoginType), zap.String("service", service),
+		zap.Int64("loginId", id), zap.Int64("disable_level", level), zap.Int64("disable_time", exTime))
 }
 
 func (l *Logic) IsDisableWithLevelAndService(id, level int64, service string) bool {
@@ -304,6 +316,8 @@ func (l *Logic) CheckDisableWithLevelAndService(id, level int64, service string)
 func (l *Logic) RmDisableWithServices(id int64, services ...string) {
 	for _, service := range services {
 		l.Store.Delete(l.buildDisableKey(id, service))
+		log.Info("remove disable", zap.String("loginType", l.LoginType), zap.Int64("loginId", id),
+			zap.Strings("services", services))
 	}
 }
 

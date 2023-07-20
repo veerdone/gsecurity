@@ -1,6 +1,9 @@
 # gsecurity
 
 ------------
+```
+go version >= 1.18
+```
 English | [中文](README-zh.md)
 
 Golang implementation imitating [sa-token](https://github.com/dromara/Sa-Token)
