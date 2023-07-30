@@ -40,6 +40,14 @@ func CheckLogin(a Adaptor) error {
 	return defaultSecurity.CheckLogin(a)
 }
 
+func GetLoginId(a Adaptor) int64 {
+	return defaultSecurity.GetLoginId(a)
+}
+
+func GetLoginToken(a Adaptor) string {
+	return defaultSecurity.GetToken(a)
+}
+
 func Sessions(a Adaptor) *Session {
 	return defaultSecurity.Session(a)
 }

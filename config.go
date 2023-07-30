@@ -18,7 +18,7 @@ package gsecurity
 
 var (
 	DefaultConfig = Config{
-		TokenName:      "GSecurity",
+		TokenName:      "G-Security",
 		Timeout:        2592000,
 		IsConcurrent:   true,
 		IsShare:        true,

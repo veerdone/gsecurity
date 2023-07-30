@@ -300,7 +300,7 @@ func (l *Logic) DisableWithLevelAndService(id, level, exTime int64, service stri
 func (l *Logic) IsDisableWithLevelAndService(id, level int64, service string) bool {
 	err := l.CheckDisableWithLevelAndService(id, level, service)
 
-	return err == nil
+	return err != nil
 }
 
 func (l *Logic) CheckDisableWithLevelAndService(id, level int64, service string) error {
