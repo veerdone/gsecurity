@@ -51,7 +51,7 @@ func (a *standardAdaptor) GetFromCookie(tokenName string) string {
 }
 
 func (a *standardAdaptor) SetHeader(headerName, headerVal string) {
-	a.Response.Header.Add(headerVal, headerVal)
+	a.Response.Header.Add(headerName, headerVal)
 }
 
 func (a *standardAdaptor) Get(key string) interface{} {
