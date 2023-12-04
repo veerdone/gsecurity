@@ -16,6 +16,8 @@
 
 package gsecurity
 
+const ContextKey = "GSecurityContextKey"
+
 type Adaptor interface {
 	GetFromHeader(tokenName string) string
 	GetFromQuery(tokenName string) string
